@@ -13,7 +13,9 @@
         >
         <div class="invalid-feedback" v-if="!$v.email.required">Email field is required.</div>
         <div class="invalid-feedback" v-if="!$v.email.email">This field should be an email.</div>
+        <div class="invalid-feedback" v-if="!$v.email.uniqEmail">This email is already exists</div>
       </div>
+
       <div class="form-group">
         <label for="password">Password</label>
         <input
@@ -28,6 +30,7 @@
           Min length of password is {{ $v.password.$params.minLength.min }}. Now it is {{ password.length }}
         </div>
       </div>
+
       <div class="form-group">
         <label for="confirm">Confirm password</label>
         <input
@@ -57,7 +60,16 @@
    validations: {
      email: {
        required,
-       email
+       email,
+       uniqEmail: function(newEmail) {
+         if (newEmail === '') return true
+         return new Promise((resolve, reject) => {
+            setTimeout(() => {
+              const value = newEmail !== 'test@mail.ru'
+              resolve(value)
+            }, 3000)
+         })
+       }
      },
      password: {
        minLength: minLength(6)
